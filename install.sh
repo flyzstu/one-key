@@ -1,10 +1,11 @@
 #!/bin/bash
 check_root(){
     if [[ "$EUID" -ne '0' ]]; then
-        echo "error: You must run this script as root!"
+		echo -e "\033[31m error: You must run this script as root! \033[0m"
         exit 1
     fi
 }
+
 check_system_and_install_deps(){
     if [[ "$(type -P apt)" ]]; then
         apt update
@@ -15,30 +16,31 @@ check_system_and_install_deps(){
     fi
 }
 install_bin(){
-  mkdir -p /usr/local/ssl
+  mkdir -p /opt/xray
   XRAY_FILE="Xray-linux-${arch}.zip"
-	echo "Downloading binary file: ${XRAY_FILE}"
+	echo -e "\033[32m Downloading binary file: ${XRAY_FILE} \033[0m"
   if [ "$mirror" = "github" ]; then
       echo $mirror
-      XRAY_BIN_URL="https://github.com/wf09/Xray-release/raw/master/${XRAY_FILE}"
+      XRAY_BIN_URL="https://github.com/flyzstu/dist/raw/main/${XRAY_FILE}"
   else
-      XRAY_BIN_URL="https://cdn.jsdelivr.net/gh/wf09/Xray-release/${XRAY_FILE}"
+      XRAY_BIN_URL="https://cdn.jsdelivr.net/gh/flyzstu/dist/${XRAY_FILE}"
   fi
 
 	wget -qO ${PWD}/Xray.zip $XRAY_BIN_URL --progress=bar:force
+
     unzip -d /tmp/Xray Xray.zip
     chmod +x /tmp/Xray/xray
-    mv /tmp/Xray/xray /usr/local/bin/xray
+    mv /tmp/Xray/xray /opt/xray/
     rm -rf Xray.zip /tmp/Xray
 
 
-    echo "${XRAY_FILE} has been downloaded" 
+	echo -e "\033[32m ${XRAY_FILE} has been downloaded \033[0m"
 }
 
 install_dat(){
 	wget -qO /usr/local/bin/geoip.dat https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geoip.dat
 	wget -qO /usr/local/bin/geosite.dat https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat
-	echo ".dat has been downloaded!"
+	echo -e "\033[32m .dat has been downloaded! \033[0m"
 }
 install_service(){
   if [ ! -f /etc/systemd/system/xray.service ];then
@@ -58,11 +60,10 @@ LimitNOFILE=1000000
 WantedBy=multi-user.target
 EOF
   fi
-  echo "Enable xray service.."
+  echo -e "\033[32m Enable xray service.. \033[0m"
   systemctl enable xray.service
-
-  echo "Please after install /usr/local/bin/config.json"
-  echo "Please run \"systemctl start xray.service\" to start service"
+  echo -e "\033[31m Please after install /opt/xray/config.json \033[0m"
+  echo -e "\033[31m \"systemctl start xray.service\" \033[0m"
 
 }
 
@@ -78,7 +79,7 @@ func(){
 }
 
 update_xray(){
-  echo "You are updating xray.."
+  echo -e "\033[32m You are updating xray.. \033[0m"
   check_root
   install_bin
   install_dat
@@ -86,41 +87,13 @@ update_xray(){
 }
 
 install_xray(){
-  echo "You are installing xray.."
+  echo -e "\033[32m You are installing xray.. \033[0m"
   check_root
   check_system_and_install_deps
   install_bin
   install_dat
   install_service
 }
-
-while [ -n "$1" ]  
-do  
-  case "$1" in   
-    --mirror)
-        mirror=$2
-        shift 
-        ;;  
-    --arch)  
-        arch=$2
-        shift   
-        ;;  
-    --install)
-      install="1"
-        ;;  
-    --update)
-      update="1"
-        ;;
-    --help,-h)
-        func
-        ;; 
-    *)  
-        echo "Please run ./install --help to get some help."
-        exit 0  
-        ;;  
-  esac  
-  shift  
-done
 
 while [ -n "$1" ]  
 do  
@@ -143,7 +116,7 @@ do
         func
         ;; 
     *)  
-        echo "Please run ./install --help to get some help."
+        echo -e "\033[32m Please run ./install --help to get some help. \033[0m"
         exit 0  
         ;;  
   esac  
