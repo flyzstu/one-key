@@ -38,8 +38,8 @@ install_bin(){
 }
 
 install_dat(){
-	wget -qO /opt/xray/xray/geoip.dat https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geoip.dat
-	wget -qO /opt/xray/xray/geosite.dat https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat
+	wget -qO /opt/xray/geoip.dat https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geoip.dat
+	wget -qO /opt/xray/geosite.dat https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat
 	echo -e "\033[32m .dat has been downloaded! \033[0m"
 }
 install_service(){
@@ -51,7 +51,7 @@ Documentation=https://github.com/xtls
 After=network.target nss-lookup.target
 [Service]
 User=root
-ExecStart=/usr/local/bin/xray
+ExecStart=/opt/xray/xray
 Restart=on-failure
 RestartPreventExitStatus=23
 LimitNPROC=10000
